@@ -11,6 +11,10 @@ yarn-error.log*
 .env.production
 .env.development
 .env.test
+.env.docker
+.env.*
+!.env.example
+!.env.production.example
 
 # Logs
 logs/
