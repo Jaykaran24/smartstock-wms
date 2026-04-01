@@ -129,3 +129,8 @@ docker-compose.override.yml
 backups/
 *.sql
 *.dump
+
+# Markdown docs
+*.md
+!README.md
+!readme.md
