@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartStock - Warehouse Management System</title>
+    <meta name="description" content="Professional Warehouse Management System for inventory and order management">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjMjU2M2ViIi8+CjxwYXRoIGQ9Ik04IDEwaDRjMSAwIDEgMCAxIDF2MmMwIDEgMCAxLTEgMUg4VjEwWk04IDE2aDRjMSAwIDEgMCAxIDF2MmMwIDEgMCAxLTEgMUg4VjE2Wk0xNiAxMGg4YzEgMCAxIDAgMSAxdjJjMCAxIDAgMS0xIDFoLThWMTBaTTE2IDE2aDhjMSAwIDEgMCAxIDF2MmMwIDEgMCAxLTEgMWgtOFYxNloiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-spinner">
+            <i class="fas fa-boxes"></i>
+            <div class="spinner"></div>
+        </div>
+        <p>Loading SmartStock...</p>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="logo">
+                    <i class="fas fa-boxes"></i>
+                    <h1>SmartStock</h1>
+                </div>
+                <p class="subtitle">Warehouse Management System</p>
+            </div>
+            
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username">
+                        <i class="fas fa-user"></i>
+                        Username
+                    </label>
+                    <input type="text" id="username" name="username" required autocomplete="username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">
+                        <i class="fas fa-lock"></i>
+                        Password
+                    </label>
+                    <div class="password-input">
+                        <input type="password" id="password" name="password" required autocomplete="current-password">
+                        <button type="button" class="toggle-password" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login
+                </button>
+            </form>
+            
+            <div class="login-footer">
+                <p>Default Admin: <code>admin</code> / <code>Admin123!</code></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="mainApp" class="app-container hidden">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-boxes"></i>
+                    <span class="logo-text">SmartStock</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="user-details">
+                    <span class="username">Username</span>
+                    <span class="user-role">Role</span>
+                </div>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item active">
+                    <a href="#" class="nav-link" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="inventory">
+                        <i class="fas fa-boxes"></i>
+                        <span>Inventory</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="orders">
+                        <i class="fas fa-shipping-fast"></i>
+                        <span>Orders</span>
+                    </a>
+                </li>
+                <li class="nav-item admin-only" style="display: none;">
+                    <a href="#" class="nav-link" data-section="users">
+                        <i class="fas fa-users"></i>
+                        <span>Users</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="profile">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary btn-full logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h2 class="page-title" id="pageTitle">Dashboard</h2>
+                </div>
+                
+                <div class="header-right">
+                    <div class="header-actions">
+                        <button class="btn btn-icon" id="refreshBtn" title="Refresh">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <div class="user-menu">
+                            <button class="user-menu-trigger" id="userMenuTrigger">
+                                <i class="fas fa-user-circle"></i>
+                                <span class="username">User</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="user-menu-dropdown" id="userMenuDropdown">
+                                <a href="#" class="menu-item" data-section="profile">
+                                    <i class="fas fa-user-cog"></i>
+                                    Profile Settings
+                                </a>
+                                <div class="menu-divider"></div>
+                                <a href="#" class="menu-item logout-btn" id="headerLogout">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Logout
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area" id="contentArea">
+                
+                <!-- Dashboard Section -->
+                <section id="dashboardSection" class="content-section active">
+                    <div class="section-header">
+                        <h3>Dashboard Overview</h3>
+                        <div class="section-actions">
+                            <button class="btn btn-secondary" id="dashboardRefresh">
+                                <i class="fas fa-sync-alt"></i>
+                                Refresh Data
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card" id="totalProducts">
+                            <div class="stat-icon">
+                                <i class="fas fa-cubes"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h4>Total Products</h4>
+                                <p class="stat-number">0</p>
+                                <span class="stat-change">Active inventory items</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card" id="totalQuantity">
+                            <div class="stat-icon">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h4>Total Stock</h4>
+                                <p class="stat-number">0</p>
+                                <span class="stat-change">Items in warehouse</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card warning" id="lowStockItems">
+                            <div class="stat-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h4>Low Stock</h4>
+                                <p class="stat-number">0</p>
+                                <span class="stat-change">Items need restocking</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card" id="pendingOrders">
+                            <div class="stat-icon">
+                                <i class="fas fa-shipping-fast"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h4>Pending Orders</h4>
+                                <p class="stat-number">0</p>
+                                <span class="stat-change">Awaiting processing</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="dashboard-widgets">
+                        <div class="widget">
+                            <div class="widget-header">
+                                <h4>Recent Orders</h4>
+                                <a href="#" class="view-all" data-section="orders">View All</a>
+                            </div>
+                            <div class="widget-content">
+                                <div id="recentActivity" class="recent-items">
+                                    <div class="loading-placeholder">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        Loading recent orders...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="widget">
+                            <div class="widget-header">
+                                <h4>Low Stock Alert</h4>
+                                <a href="#" class="view-all" data-section="inventory" data-filter="lowStock">View All</a>
+                            </div>
+                            <div class="widget-content">
+                                <div id="lowStockItems" class="recent-items">
+                                    <div class="loading-placeholder">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        Loading low stock items...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Inventory Section -->
+                <section id="inventorySection" class="content-section">
+                    <div class="section-header">
+                        <h3>Inventory Management</h3>
+                        <div class="section-actions">
+                            <button class="btn btn-primary btn-add-product" id="addProductBtn">
+                                <i class="fas fa-plus"></i>
+                                Add Product
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Filters and Search -->
+                    <div class="filters-bar">
+                        <div class="search-box">
+                            <input type="text" id="searchInput" placeholder="Search products by name or SKU...">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <select id="categoryFilter">
+                                <option value="">All Categories</option>
+                            </select>
+                            
+                            <select id="stockFilter">
+                                <option value="">All Items</option>
+                                <option value="inStock">In Stock</option>
+                                <option value="lowStock">Low Stock</option>
+                                <option value="outOfStock">Out of Stock</option>
+                            </select>
+                            
+                            <button class="btn btn-secondary" id="clearFilters">
+                                <i class="fas fa-times"></i>
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Products Table -->
+                    <div class="table-container">
+                        <table class="data-table" id="productsTable">
+                            <thead>
+                                <tr>
+                                    <th data-sort="name">Product Name <i class="fas fa-sort"></i></th>
+                                    <th data-sort="sku">SKU <i class="fas fa-sort"></i></th>
+                                    <th data-sort="category">Category <i class="fas fa-sort"></i></th>
+                                    <th data-sort="quantity">Quantity <i class="fas fa-sort"></i></th>
+                                    <th data-sort="location">Location <i class="fas fa-sort"></i></th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTableBody">
+                                <tr>
+                                    <td colspan="7" class="loading-cell">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        Loading products...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="pagination-container" id="productsPagination">
+                        <!-- Pagination controls will be inserted here -->
+                    </div>
+                </section>
+
+                <!-- Orders Section -->
+                <section id="ordersSection" class="content-section">
+                    <div class="section-header">
+                        <h3>Order Management</h3>
+                        <div class="section-actions">
+                            <button class="btn btn-secondary btn-add-order" id="addInboundBtn" data-type="Inbound">
+                                <i class="fas fa-arrow-down"></i>
+                                Inbound Order
+                            </button>
+                            <button class="btn btn-primary btn-add-order" id="addOutboundBtn" data-type="Outbound">
+                                <i class="fas fa-arrow-up"></i>
+                                Outbound Order
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Order Filters -->
+                    <div class="filters-bar">
+                        <div class="filter-group">
+                            <select id="orderTypeFilter">
+                                <option value="">All Types</option>
+                                <option value="Inbound">Inbound</option>
+                                <option value="Outbound">Outbound</option>
+                            </select>
+                            
+                            <select id="orderStatusFilter">
+                                <option value="">All Status</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Processing">Processing</option>
+                                <option value="Shipped">Shipped</option>
+                                <option value="Received">Received</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                            
+                            <input type="text" id="partySearch" placeholder="Search by customer/supplier...">
+                            
+                            <button class="btn btn-secondary" id="clearOrderFilters">
+                                <i class="fas fa-times"></i>
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Orders Table -->
+                    <div class="table-container">
+                        <table class="data-table" id="ordersTable">
+                            <thead>
+                                <tr>
+                                    <th data-sort="orderId">Order ID <i class="fas fa-sort"></i></th>
+                                    <th data-sort="type">Type <i class="fas fa-sort"></i></th>
+                                    <th data-sort="partyName">Customer/Supplier <i class="fas fa-sort"></i></th>
+                                    <th data-sort="status">Status <i class="fas fa-sort"></i></th>
+                                    <th data-sort="createdAt">Date <i class="fas fa-sort"></i></th>
+                                    <th>Items</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTableBody">
+                                <tr>
+                                    <td colspan="7" class="loading-cell">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        Loading orders...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="pagination-container" id="ordersPagination">
+                        <!-- Pagination controls will be inserted here -->
+                    </div>
+                </section>
+
+                <!-- Users Section (Admin Only) -->
+                <section id="usersSection" class="content-section">
+                    <div class="section-header">
+                        <h3>User Management</h3>
+                        <div class="section-actions">
+                            <button class="btn btn-primary" id="addUserBtn">
+                                <i class="fas fa-user-plus"></i>
+                                Add User
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Users Table -->
+                    <div class="table-container">
+                        <table class="data-table" id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Role</th>
+                                    <th>Created</th>
+                                    <th>Last Login</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr>
+                                    <td colspan="6" class="loading-cell">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        Loading users...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Profile Section -->
+                <section id="profileSection" class="content-section">
+                    <div class="section-header">
+                        <h3>Profile Settings</h3>
+                    </div>
+                    
+                    <div class="profile-container">
+                        <div class="profile-card">
+                            <div class="profile-header">
+                                <div class="profile-avatar">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div class="profile-info">
+                                    <h4 id="profileUsername">Username</h4>
+                                    <p id="profileRole">Role</p>
+                                </div>
+                            </div>
+                            
+                            <form id="profileForm" class="profile-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="profileUsernameInput">Username</label>
+                                        <input type="text" id="profileUsernameInput" name="username">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="profileRoleInput">Role</label>
+                                        <input type="text" id="profileRoleInput" name="role" readonly>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-section">
+                                    <h5>Change Password</h5>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="currentPassword">Current Password</label>
+                                            <input type="password" id="currentPassword" name="currentPassword">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="newPassword">New Password</label>
+                                            <input type="password" id="newPassword" name="newPassword">
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="confirmPassword">Confirm New Password</label>
+                                            <input type="password" id="confirmPassword" name="confirmPassword">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-secondary" id="cancelProfileChanges">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i>
+                                        Save Changes
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="productModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="productModalTitle" class="modal-title">Add New Product</h3>
+                <button type="button" class="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="productForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productName">Product Name *</label>
+                            <input type="text" id="productName" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="productSku">SKU *</label>
+                            <input type="text" id="productSku" name="sku" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productCategory">Category *</label>
+                            <input type="text" id="productCategory" name="category" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="productLocation">Location *</label>
+                            <input type="text" id="productLocation" name="location" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productQuantity">Quantity *</label>
+                            <input type="number" id="productQuantity" name="quantity" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="productPrice">Unit Price</label>
+                            <input type="number" id="productPrice" name="unitPrice" min="0" step="0.01">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productReorderLevel">Reorder Level</label>
+                            <input type="number" id="productReorderLevel" name="reorderLevel" min="0" value="10">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productDescription">Description</label>
+                        <textarea id="productDescription" name="description" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+                <button type="submit" form="productForm" class="btn btn-primary">Save Product</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Modal -->
+    <div id="orderModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="orderModalTitle" class="modal-title">Create New Order</h3>
+                <button type="button" class="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="orderForm">
+                    <div class="form-section">
+                        <h5>Order Information</h5>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="orderType">Order Type *</label>
+                                <select id="orderType" name="type" required>
+                                    <option value="">Select Type</option>
+                                    <option value="Inbound">Inbound (Receiving)</option>
+                                    <option value="Outbound">Outbound (Shipping)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="orderParty">Customer/Supplier *</label>
+                                <input type="text" id="orderParty" name="partyName" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="orderPriority">Priority</label>
+                                <select id="orderPriority" name="priority">
+                                    <option value="Low">Low</option>
+                                    <option value="Medium" selected>Medium</option>
+                                    <option value="High">High</option>
+                                    <option value="Urgent">Urgent</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="orderExpectedDate">Expected Date</label>
+                                <input type="date" id="orderExpectedDate" name="expectedDate">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h5>Contact Information</h5>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="orderEmail">Email</label>
+                                <input type="email" id="orderEmail" name="partyEmail">
+                            </div>
+                            <div class="form-group">
+                                <label for="orderPhone">Phone</label>
+                                <input type="tel" id="orderPhone" name="partyPhone">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="orderAddress">Address</label>
+                            <textarea id="orderAddress" name="partyAddress" rows="2"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h5>Order Items</h5>
+                        <div id="orderItems">
+                            <div class="order-item">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Product</label>
+                                        <select name="productId" class="product-select" required>
+                                            <option value="">Select Product</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Quantity</label>
+                                        <input type="number" name="quantity" min="1" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Unit Price</label>
+                                        <input type="number" name="unitPrice" min="0" step="0.01">
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-error remove-item">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary" id="addOrderItem">
+                            <i class="fas fa-plus"></i>
+                            Add Item
+                        </button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="orderNotes">Notes</label>
+                        <textarea id="orderNotes" name="notes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+                <button type="submit" form="orderForm" class="btn btn-primary">Create Order</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Container -->
+    <div id="modalContainer" class="modal-overlay hidden">
+        <div class="modal-content" id="modalContent">
+            <!-- Modal content will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>
